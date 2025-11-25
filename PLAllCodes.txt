@@ -1,0 +1,2234 @@
+Practical 1
+
+---------------------------
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Coustomer {
+public:
+    int id;
+    long long phone;
+    string name;
+    double bill;
+
+    void read() {
+        cout << "Enter Coustomer ID: ";
+        cin >> id;
+        cout << "Enter Coustomer Name: ";
+        cin.ignore();
+        getline(cin, name);
+        cout << "Enter Phone Number: ";
+        cin >> phone;
+        cout << "Enter Bill Amount ($): ";
+        cin >> bill;
+        cout << "\n";
+    }
+
+    void display() {
+        cout << "\n--- Coustomer ---\n";
+        cout << "Coustomer ID  : " << id << endl;
+        cout << "Name          : " << name << endl;
+        cout << "Phone Number  : " << phone << endl;
+        cout << "Bill Amount   : $" << bill << endl;
+    }
+
+    void insert() {
+        cout << "\nInserting New Record...\n";
+        read();
+    }
+};
+
+
+void delete_data(Coustomer s[], int &n) {
+    int cID;
+    cout << "Enter Coustomer ID to delete Record: ";
+    cin >> cID;
+
+    int index = -1;
+    for (int i = 0; i < n; i++) {
+        if (s[i].id == cID) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1) {
+        cout << "Coustomer ID not found!\n";
+        return;
+    }
+
+    for (int i = index; i < n - 1; i++) {
+        s[i] = s[i + 1];
+    }
+    n--;
+    cout << "Record deleted successfully!\n";
+}
+
+
+void update_data(Coustomer s[], int n) {
+    int cID, choice;
+    cout << "Enter Coustomer ID to update Record: ";
+    cin >> cID;
+
+    for (int i = 0; i < n; i++) {
+        if (s[i].id == cID) {
+            cout << "\n1. Update Coustomer ID\n";
+            cout << "2. Update Coustomer Name\n";
+            cout << "3. Update Coustomer Phone\n";
+            cout << "4. Update Final Bill Amount\n";
+            cout << "Enter choice: ";
+            cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    cout << "Enter new Coustomer ID: ";
+                    cin >> s[i].id;
+                    break;
+                case 2:
+                    cout << "Enter Coustomer Name: ";
+                    cin.ignore();
+                    getline(cin, s[i].name);
+                    break;
+                    case 3:
+                    cout << "Enter new Phone Number: ";
+                    cin >> s[i].phone;
+                    break;
+                case 4:
+                    cout << "Enter Final Amount ($): ";
+                    cin >> s[i].bill;
+                    break;
+                default:
+                    cout << "Invalid choice!\n";
+            }
+            cout << "Record updated successfully!\n";
+            return; 
+        }
+    }
+    cout << "Coustomer ID not found!\n";
+}
+
+int main() {
+    int n;
+    
+    Coustomer s[100];
+
+    int c;
+
+    do {
+        cout << "\n**** MENU ****\n";
+        cout << "1. Fill Details\n";
+        cout << "2. Display\n";
+        cout << "3. Insert\n";
+        cout << "4. Delete Data\n";
+        cout << "5. Update Data\n";
+        cout << "6. Exit\n";
+        cout << "Enter choice: ";
+        cin >> c;
+
+        switch (c) {
+            case 1:
+                cout << "Enter Total Enrollments: ";
+                cin >> n;
+                cout << "ENTER DETAILS FOR RECORDS\n";
+                for (int i = 0; i < n; i++) {
+                    s[i].read();
+                }
+                break;
+
+            case 2:
+                cout << "\nTOTAL RECORDS\n";
+                for (int i = 0; i < n; i++) {
+                    s[i].display();
+                }
+                break;
+
+            case 3:
+                if (n < 100) {
+                    s[n].insert();
+                    n++;
+                } else {
+                    cout << "Record limit reached!\n";
+                }
+                break;
+
+            case 4:
+                delete_data(s, n);
+                break;
+
+            case 5:
+                update_data(s, n);
+                break;
+
+            case 6:
+                cout << "Exiting...\n";
+                break;
+
+            default:
+                cout << "Invalid choice!\n";
+        }
+    } while (c != 6);
+
+    return 0;
+}
+-----------------------------
+Practical 2
+------------------------------
+#include <iostream>
+using namespace std;
+#define MAX 100
+class Sparse{
+public:
+	int A[MAX][MAX];
+	int B[MAX][3];
+	int transpose[MAX][3];
+	int sum[MAX][3];
+	int rows,cols;
+	void read(){
+		cout << "Enter Rows and Columns: ";
+		cin >> rows >> cols;
+		cout <<"Enter Elements in Matrix\n";
+		for (int i=0; i < rows; i++){
+			for (int j = 0; j<cols; j++){
+				cin >> A[i][j];
+			}
+		}
+	}
+	void convert(){
+		int k = 1;
+		for (int i=0; i<rows; i++){
+			for (int j=0; j < cols; j++){
+				if (A[i][j] != 0){
+					B[k][0] = i;
+					B[k][1] = j;
+					B[k][2] = A[i][j];
+					k++;
+				}
+			}
+		}
+		B[0][0]= rows;
+		B[0][1]= cols;
+		B[0][2]= k-1;
+	}
+		
+	void display(){
+		int terms = B[0][2]; 
+		cout << "\nRows\tColumns\tValue\n";
+		for (int i =0; i <= terms; i++){
+			for ( int j =0; j < 3; j++){
+				cout << B[i][j] << "\t";
+			}
+			cout <<"\n";
+		}
+	}
+	
+	void Transpose(){
+		int k =1;
+		for (int i =0; i < B[0][1]; i++){
+			for(int j =1; j <= B[0][2]; j++){
+				if(B[j][1] == i){
+					transpose[k][0] = B[j][1];
+					transpose[k][1] = B[j][0];
+					transpose[k][2] = B[j][2];
+					k++;
+				}
+			}
+		}
+		transpose[0][0]= cols;
+		transpose[0][1]= rows;
+		transpose[0][2]= k-1;
+	}
+	
+	void fastTranspose(){
+		int col = B[0][1];
+		int t = B[0][2];
+		int total[col] = {0};
+		int index[col + 1]= {0};
+		index[0] = 1;
+		
+		for(int i =1; i<= t; i++){
+			total[B[i][1]]++;
+		}
+		for(int i=1;i < B[0][1]; i++){
+			index[i] = index[i-1] + total[i-1];
+		}
+
+		for(int i =1; i<= B[0][2]; i++){
+			int pos = index[B[i][1]]++;
+			transpose[pos][0] = B[i][1];
+			transpose[pos][1] = B[i][0];
+			transpose[pos][2] = B[i][2];
+		}
+		transpose[0][0] = B[0][1];
+		transpose[0][1] = B[0][0];
+		transpose[0][2] = B[0][2];
+	}
+
+	void display1(){
+		int terms = transpose[0][2]; 
+		cout << "\nRows\tColumns\tValue\n";
+		for (int i =0; i <= terms; i++){
+			for ( int j =0; j < 3; j++){
+				cout << transpose[i][j] << "\t";
+			}
+			cout <<"\n";
+		}
+	}
+    
+    void add(Sparse &b){
+	int i =1, j=1, k=1;
+	int t1 = B[0][2];
+	int t2 = b.B[0][2];
+	
+	sum[0][0] = B[0][0];
+	sum[0][1] = B[0][1];
+	
+	while(i <= t1 && j <= t2){
+		if(B[i][0] == b.B[j][0]){
+			if(B[i][1] == b.B[j][1]){
+				sum[k][0] = B[i][0];
+				sum[k][1] = B[i][1];
+				sum[k][2] = B[i][2] + b.B[j][2];
+				i++;
+				j++;
+				k++;
+			}
+			else{
+				if(B[i][1] < b.B[j][1]){
+					sum[k][0] = B[i][0];
+					sum[k][1] = B[i][1];
+					sum[k][2] = B[i][2];
+					i++;
+					k++;
+				}
+				else{
+					if(B[i][1] > b.B[j][1]){
+						sum[k][0] = b.B[j][0];
+						sum[k][1] = b.B[j][1];
+						sum[k][2] = b.B[j][2];
+						j++;
+						k++;
+					}
+				}
+			}
+		}
+		else{
+			if(B[i][0] > b.B[j][0]){
+				sum[k][0] = b.B[j][0];
+				sum[k][1] = b.B[j][1];
+				sum[k][2] = b.B[j][2];
+				j++;
+				k++;
+			}
+			else{
+				if(B[i][0] < b.B[j][0]){
+					sum[k][0] = B[i][0];
+					sum[k][1] = B[i][1];
+					sum[k][2] = B[i][2];
+					i++;
+					k++;
+				}
+			}
+		}	
+	}
+	while(j <= t2){
+		sum[k][0] = b.B[j][0];
+		sum[k][1] = b.B[j][1];
+		sum[k][2] = b.B[j][2];
+		j++;
+		k++;
+	}
+	while(i <= t1){
+		sum[k][0] = B[i][0];
+		sum[k][1] = B[i][1];
+		sum[k][2] = B[i][2];
+		i++;
+		k++;
+	}
+	sum[0][2] = k-1;
+	
+	int terms = sum[0][2];
+		cout << "\nAddition of A & B Matrix"; 
+		cout << "\nRows\tColumns\tValue\n";
+		for (int i =0; i <= terms; i++){
+			for ( int j =0; j < 3; j++){
+				cout << sum[i][j] << "\t";
+			}
+			cout <<"\n";
+		}
+    }
+
+	void Product(Sparse &b){
+		int p=1;
+		sum[0][0] = B[0][0];
+		sum[0][1] = b.B[0][1];
+		sum[0][2] = 0;
+		for(int i=1; i <= B[0][2];i++){
+			for(int j =1; j<= b.transpose[0][2]; j++){
+				if(B[i][1] == b.transpose[j][1]){
+					int r = B[i][0];
+					int c = b.transpose[j][0];
+					int v = B[i][2] * b.transpose[j][2];
+					
+					bool flag = false;
+					for(int k = 1; k < p;k++){
+						if(r == sum[k][0] && c == sum[k][1]){
+							sum[k][2] += v;
+							flag = true;
+							break;
+						}
+					}
+					if(!flag){
+						sum[p][0] = r;
+						sum[p][1] = c;
+						sum[p][2] = v;
+						p++;
+					}
+				}
+			}
+		}
+		sum[0][2] = p-1;
+		
+		int terms = sum[0][2]; 
+		cout << "\nMultiplication of A & B Matrix";
+		cout << "\nRows\tColumns\tValue\n";
+		for (int i =0; i <= terms; i++){
+			for ( int j =0; j < 3; j++){
+				cout << sum[i][j] << "\t";
+			}
+			cout <<"\n";
+		}
+		
+	}
+};
+
+ 
+int main(){
+	Sparse a,b;
+	int choice = 0;
+
+	do{
+
+		cout <<"\n1. Enter Matrix\n";
+		cout <<"2. Display Matrix\n";
+		cout <<"3. Convert to Sparse Matrix\n";
+		cout <<"4. Transpose of Matrix\n";
+		cout <<"5. Fast Transpose of Matrix\n";
+		cout <<"6. Addition of Matrix\n";
+		cout <<"7. Multiplication of Matrix\n";
+		cout <<"8. Exit !\n";
+		cout << "Enter Choice (1-8): ";
+		cin >> choice;
+		switch (choice)
+		{
+		case 1: a.read();
+			break;
+		case 2: a.display();
+			break;
+		case 3: a.convert();
+				a.display();
+			break;
+		case 4: a.Transpose();
+				a.display1();
+			break;
+		case 5: a.fastTranspose();
+				a.display1();
+			break;
+		case 6: a.read(); 
+				a.convert();
+				b.read();
+				b.convert();
+				a.add(b);
+			break;
+		case 7: a.read();
+				a.convert();
+				b.read();
+				b.convert();
+				a.Product(b);
+			break;
+		case 8: cout << "Existing ......... ! ";
+			break;
+		
+		default:
+			break;
+		}
+
+	}while (choice != 8);
+	
+	
+
+
+  return 0;
+
+}
+---------------------------------
+Practical 3
+---------------------------------
+#include <bits/stdc++.h>
+#include <string>
+using namespace std;
+
+class Node
+{
+public:
+    int rollno;
+    string name;
+    string college;
+    string company;
+    double gpa;
+    double ctc;
+
+    Node *next;
+};
+
+class Placement
+{
+    Node *head;
+
+public:
+    Placement()
+    {
+        head = NULL;
+    }
+
+    void create()
+    {
+        Node *temp = NULL;
+
+        int n;
+        cout << "Enter Number of Students data to fill List: ";
+        cin >> n;
+        while (n--)
+        {
+            Node *t = new Node;
+
+            cout << "Enter Roll Number: ";
+            cin >> t->rollno;
+            cin.ignore();
+            cout << "Enter Name: ";
+            getline(cin, t->name);
+            cout << "Enter College Name: ";
+            getline(cin, t->college);
+            cout << "Enter CPGA: ";
+            cin >> t->gpa;
+            cin.ignore();
+            cout << "Enter Company Name: ";
+            getline(cin, t->company);
+            cout << "Enter LPA: ";
+            cin >> t->ctc;
+
+            cout << "\n";
+            t->next = NULL;
+
+            if (head == NULL)
+            {
+                head = t;
+                temp = head;
+            }
+            else
+            {
+                temp->next = t;
+                temp = temp->next;
+            }
+        }
+    }
+
+    void display()
+    {
+        Node *temp = head;
+
+        if (head == NULL)
+            cout << "List is Empty !\n";
+
+        cout << "\n--- Student List ---\n";
+
+        while (temp)
+        {
+            cout << "Roll Number : " << temp->rollno << "\n";
+            cout << "Name        : " << temp->name << "\n";
+            cout << "College Name: " << temp->college << "\n";
+            cout << "CGPA        : " << temp->gpa << "\n";
+            cout << "Company Name: " << temp->company << "\n";
+            cout << "CTC         : " << temp->ctc << " LPA\n\n";
+
+            temp = temp->next;
+        }
+    }
+
+    void search()
+    {
+        Node *temp = head;
+        int roll;
+        cout << "Enter Roll Number to Search in the List: ";
+        cin >> roll;
+
+        while (temp)
+        {
+            if (temp->rollno == roll)
+            {
+                cout << "Roll Number " << roll << " Found in the List\n";
+                break;
+            }
+            temp = temp->next;
+        }
+        if (temp == NULL)
+        {
+            cout << "Roll Number" << roll << " not Found in the List\n";
+        }
+    }
+
+    void update()
+    {
+        Node *temp = head;
+        int roll;
+        cout << "Enter Roll Number to Update in the List: ";
+        cin >> roll;
+
+        while (temp)
+        {
+            if (temp->rollno == roll)
+            {
+                cout << "\n1. Roll Number\n";
+                cout << "2. Name\n";
+                cout << "3. College Name\n";
+                cout << "4. CGPA\n";
+                cout << "5. Company Name\n";
+                cout << "6. CTC\n";
+                cout << "7. Exit\n";
+
+                int choice;
+                cout << "Enter your Choice: ";
+                cin >> choice;
+
+                switch (choice)
+                {
+                case 1:
+                    cout << "Enter New Roll Number: ";
+                    cin >> temp->rollno;
+                    break;
+
+                case 2:
+                    cout << "Enter New Name: ";
+                    cin >> temp->name;
+                    break;
+                case 3:
+                    cout << "Enter College Name: ";
+                    cin.ignore();
+                    getline(cin, temp->college);
+                    break;
+
+                case 4:
+                    cout << "Enter New CGPA: ";
+                    cin >> temp->gpa;
+                    break;
+                case 5:
+                    cout << "Enter Company Name: ";
+                    cin.ignore();
+                    getline(cin, temp->company);
+                    break;
+                case 6:
+                    cout << "Enter CTC: ";
+                    cin >> temp->ctc;
+                    break;
+
+                default:
+                    break;
+                }
+                break;
+            }
+            temp = temp->next;
+        }
+        if (temp == NULL)
+        {
+            cout << "Roll Number" << roll << " not Found in the List\n";
+        }
+    }
+
+    void insertValue()
+    {
+        Node *t = new Node;
+        Node *temp = head;
+
+        int roll;
+        cout << "Enter Roll Number After the New Data to be Stored: ";
+        cin >> roll;
+
+        while (temp)
+        {
+            if (temp->rollno == roll)
+            {
+                cout << "Enter Roll Number: ";
+                cin >> t->rollno;
+                cin.ignore();
+                cout << "Enter Name: ";
+                getline(cin, t->name);
+                cout << "Enter College Name: ";
+                getline(cin, t->college);
+                cout << "Enter CPGA: ";
+                cin >> t->gpa;
+                cin.ignore();
+                cout << "Enter Company Name: ";
+                getline(cin, t->company);
+                cout << "Enter LPA: ";
+                cin >> t->ctc;
+
+                cout << "\n";
+                t->next = NULL;
+
+                if (temp->next == NULL)
+                {
+                    temp->next = t;
+                }
+                else
+                {
+                    t->next = temp->next;
+                    temp->next = t;
+                }
+
+                break;
+            }
+            temp = temp->next;
+        }
+    }
+
+    void insertPosition()
+    {
+        Node *temp = head;
+        Node *t = new Node;
+
+        int pos;
+        cout << "Enter Position After the New Data to be Stored: ";
+        cin >> pos;
+
+        cout << "Enter Roll Number: ";
+        cin >> t->rollno;
+        cin.ignore();
+        cout << "Enter Name: ";
+        getline(cin, t->name);
+        cout << "Enter College Name: ";
+        getline(cin, t->college);
+        cout << "Enter CPGA: ";
+        cin >> t->gpa;
+        cin.ignore();
+        cout << "Enter Company Name: ";
+        getline(cin, t->college);
+        cout << "Enter LPA: ";
+        cin >> t->ctc;
+
+        cout << "\n";
+        t->next = NULL;
+
+        int cnt = 0;
+        while (temp)
+        {
+            cnt++;
+            temp = temp->next;
+        }
+
+        if (pos == 0)
+        {
+            t->next = head;
+            head = t;
+        }
+        else if (pos == cnt)
+        {
+            while (temp->next != NULL)
+            {
+                temp = temp->next;
+            }
+            temp->next = t;
+        }
+        else if (pos < cnt)
+        {
+            temp = head;
+            for (int i = 1; i <= pos - 1; i++)
+            {
+                temp = temp->next;
+            }
+            t->next = temp->next;
+            temp->next = t;
+        }
+        else if (pos > cnt)
+        {
+            cout << "Invalid Position --- Use position from 1 to " << cnt << "\n";
+        }
+    }
+
+    void deleteValue()
+    {
+        Node *temp = head;
+        Node *prev = NULL;
+        int roll;
+        cout << "Enter Roll Number to be deleted: ";
+        cin >> roll;
+
+        if (head == NULL)
+        {
+            cout << "List is Empty !\n";
+        }
+        while (temp != NULL)
+        {
+            if (temp->rollno == roll)
+            {
+                prev->next = temp->next;
+                delete temp;
+                break;
+            }
+            prev = temp;
+            temp = temp->next;
+        }
+
+        if (temp == NULL)
+        {
+            cout << "Enter valid Roll Number !\n";
+        }
+    }
+
+    void deletePosition()
+    {
+        Node *temp = head;
+        Node *prev = NULL;
+
+        int pos;
+        cout << "Enter Position to be deleted: ";
+        cin >> pos;
+        if (pos == 1)
+        {
+            temp = head;
+            head = head->next;
+            delete temp;
+        }
+        int cnt = 0;
+        while (temp != NULL)
+        {
+            cnt++;
+            if (cnt == pos)
+            {
+                prev->next = prev->next->next;
+                delete temp;
+                break;
+            }
+            prev = temp;
+            temp = temp->next;
+        }
+        if (temp == NULL)
+        {
+            cout << "Enter valid Roll Number !\n";
+        }
+    }
+
+    void sortLL()
+    {
+        for (Node *temp = head; temp != NULL; temp = temp->next)
+        {
+            Node *mini = temp;
+            for (Node *curr = temp; curr != NULL; curr = curr->next)
+            {
+                if (mini->rollno > curr->rollno)
+                {
+                    mini = curr;
+                }
+            }
+            swap(temp->rollno, mini->rollno);
+            swap(temp->name, mini->name);
+            swap(temp->gpa, mini->gpa);
+            swap(temp->ctc, mini->ctc);
+            swap(temp->college, mini->college);
+            swap(temp->company, mini->company);
+        }
+    }
+    void reverse()
+    {
+        Node *p, *q, *r;
+        p = NULL;
+        q = head;
+        r = NULL;
+
+        while (q != NULL)
+        {
+            r = q->next;
+            q->next = p;
+            p = q;
+            q = r;
+        }
+        head = p;
+    }
+};
+
+int main()
+{
+
+    Placement S;
+    int choice = 0;
+
+    while (choice != 11)
+    {
+        cout << "\n--- Menu ---\n";
+        cout << "1. Create Student List\t\t\t\t";
+        cout << "2. Display Student List\n";
+        cout << "3. Update Student List\t\t\t\t";
+        cout << "4. Search in Student List\n";
+        cout << "5. Insert Student Data by Roll Number\t\t";
+        cout << "6. Insert Student Data by Position\n";
+        cout << "7. Delete Student Data by Roll Number\t\t";
+        cout << "8. Delete Student Data by Position\n";
+        cout << "9. Sort the List\t\t\t\t";
+        cout << "10. Reverse the List\n";
+        cout << "11. -------- Exit --------\n";
+
+        cout << "\nEnter Your Choice (1-9): ";
+        cin >> choice;
+        switch (choice)
+        {
+        case 1:
+            S.create();
+            break;
+        case 2:
+            S.display();
+            break;
+        case 3:
+            S.update();
+            break;
+        case 4:
+            S.search();
+            break;
+        case 5:
+            S.insertValue();
+            break;
+        case 6:
+            S.insertPosition();
+            break;
+        case 7:
+            S.deleteValue();
+            break;
+        case 8:
+            S.deletePosition();
+            break;
+        case 9:
+            S.sortLL();
+            break;
+        case 10:
+            S.reverse();
+            break;
+        case 11:
+            cout << "Thanks for using our Service ðŸ˜ðŸ˜Š !\n";
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    return 0;
+}
+--------------------------------
+Practical 4
+--------------------------------
+#include <bits/stdc++.h>
+using namespace std;
+
+class Node{
+public:
+    int rollno;
+    string name;
+    double gpa;
+    Node* next;
+    Node* back;
+};
+
+class Student{
+    Node* head;
+public:
+
+    Student(){
+        head = NULL;
+    }
+
+    int choice = 1;
+    void create(){
+        Node* prev = NULL;
+        do
+        {
+            Node* temp = new Node;
+
+            cout << "Enter Roll No: ";
+            cin >> temp->rollno;
+            cout << "Enter Name: ";
+            cin >> temp->name;
+            cout << "Enter CGPA: ";
+            cin >> temp->gpa;
+            temp->next = NULL;
+            cout << "\n";
+
+            if(head == NULL){
+                head = temp;
+                temp->back = NULL;
+                prev = temp;
+            }
+            else{
+                temp->back = prev;
+                prev->next = temp;
+                prev = temp;
+            }
+
+            cout << "Enter 1 - Continue \t 0 - Stop: ";
+            cin >> choice;
+        } while (choice != 0);
+        
+    }
+
+    void display(){
+        Node* temp = head;
+        cout << "----Displaying Student List----\n";
+        while(temp){
+            cout << "Roll Number : " << temp->rollno << "\n";
+            cout << "Name        : " << temp->name << "\n";
+            cout << "CGPA        : " << temp->gpa << "\n\n";
+            temp = temp->next;
+        }
+    }
+
+    void displayReverse(){
+        Node* temp = head;
+        while(temp->next != NULL){
+            temp = temp->next;
+        }
+        cout << "----Displaying in Reverse----\n";
+        while(temp){
+            cout << "Roll Number : " << temp->rollno << "\n";
+            cout << "Name        : " << temp->name << "\n";
+            cout << "CGPA        : " << temp->gpa << "\n\n";
+            temp = temp->back;
+        }
+    }
+
+	void sort(){
+		
+	}
+    void merge(Student s1, Student s2){
+        if(s1.head ==NULL && s2.head == NULL){
+        	cout << "Merging Not possible\n";
+		}
+		else if(s1.head == NULL){
+			head = s2.head;
+		}
+		else if(s2.head == NULL){
+			head = s1.head;
+		}
+		else{
+			Node *p, *q, *r;
+			p = s1.head;
+			q = s2.head;
+			if(p->rollno < q->rollno){
+				head = p;
+				p = p->next;
+			}
+			else{
+				head = q;
+				q = q->next;
+			}
+			r = head;
+			while(p != NULL && q != NULL){
+				if(p->rollno < q->rollno){
+					r->next = p;
+					p->back = r;
+					p = p->next;
+					r = r->next;
+				}
+				else if(p->rollno > q->rollno){
+					r->next = q;
+					q->back = r;
+					q = q->next;
+					r = r->next;
+				}
+				else{
+					r->next = p;
+					p->back = r;
+					p = p->next;
+					q = q->next;
+					r = r->next;
+				}
+			}
+			if(p == NULL){
+				r->next = q;
+				q->back = r;
+			}
+			if(q == NULL){
+				r->next = p;
+				p->back = r;
+			}
+		}
+		
+		this->display();
+    }
+};
+
+
+int main(){
+
+    Student s1,s2,s3;
+    s1.create();
+    s2.create();
+    s1.display();
+    s2.display();
+    s3.merge(s1,s2);
+    return 0;
+}
+--------------------------------
+Practical 5
+---------------------------------
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Node {
+public:
+    int ID;
+    int quantity;
+    string type;
+    string size;
+    Node* next;
+
+    Node(int id, int qty, string t, string s) {
+        ID = id;
+        quantity = qty;
+        type = t;
+        size = s;
+        next = NULL;
+    }
+};
+
+class CLL {
+    Node* head;
+    int maxOrders;
+    int count;
+
+public:
+    CLL(int max) {
+        head = NULL;
+        maxOrders = max;
+        count = 0;
+    }
+
+    Node* createNode() {
+        int id, qty;
+        string type, size;
+
+        cout << "Enter Order ID: ";
+        cin >> id;
+        cout << "Enter Quantity: ";
+        cin >> qty;
+        cout << "Enter Type: ";
+        cin >> type;
+        cout << "Enter Size (Small/Medium/Large): ";
+        cin >> size;
+
+        return new Node(id, qty, type, size);
+    }
+
+    void placeOrder() {
+        if (count == maxOrders) {
+            cout << "Order is full! Cannot take more orders." << endl;
+            return;
+        }
+
+        Node* temp = createNode();
+
+        if (head == NULL) {
+            head = temp;
+            head->next = head;
+        } else {
+            Node* t;
+            for (t = head; t->next != head; t = t->next);
+            t->next = temp;
+            temp->next = head;
+        }
+
+        count++;
+        cout << "Order Placed Successfully" << endl;
+    }
+
+    void serveOrder() {
+        if (head == NULL) {
+            cout << "No orders to serve" << endl;
+            return;
+        }
+
+        Node* temp = head;
+
+        if (head->next == head) {
+            head = NULL;
+        } 
+        else {
+            Node* t = head;
+            while (t->next != head)
+                t = t->next;
+            
+            head = head->next;
+            t->next = head;
+        }
+
+        cout << "Order ID " << temp->ID << " served." << endl;
+        delete temp;
+        count--;
+    }
+
+    void displayOrders() {
+        if (head == NULL) {
+            cout << "No orders in the list." << endl;
+            return;
+        }
+
+        Node* t = head;
+        cout << "\nCurrent Orders in list:" << endl;
+
+        do {
+            cout << "ID: " << t->ID
+                 << ", Quantity: " << t->quantity
+                 << ", Type: " << t->type
+                 << ", Size: " << t->size << endl;
+            t = t->next;
+        } while (t != head);
+    }
+};
+
+int main() {
+    int maxOrders;
+    cout << "Enter maximum number of orders Pizza Parlor can take: ";
+    cin >> maxOrders;
+
+    CLL pizzaParlor(maxOrders);
+    int choice;
+
+    do {
+        cout << "\n1. Place Order\n2. Serve Order\n3. Display Orders\n4. Exit\nEnter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                pizzaParlor.placeOrder();
+                break;
+            case 2:
+                pizzaParlor.serveOrder();
+                break;
+            case 3:
+                pizzaParlor.displayOrders();
+                break;
+            case 4:
+                cout << "Exit" << endl;
+                break;
+            default:
+                cout << "Invalid choice. Try again." << endl;
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}
+-------------------------------------------
+Practical 6
+-------------------------------------------
+
+
+
+
+
+#include <iostream>
+#include <string>
+#include <cmath>
+#include <cctype>
+#define MAX 108
+using namespace std;
+
+class Stack {
+private:
+	int top;
+	char arr[MAX];
+
+public:
+	Stack() { top = -1; }
+
+	void push(char val) {
+		if (full()) {
+			cout << "Stack Overflow!" << endl;
+			return;
+		}
+		arr[++top] = val;
+	}
+
+	char pop() {
+		if (empty()) {
+			cout << "Stack Underflow!" << endl;
+			return '\0';
+		}
+		return arr[top--];
+	}
+
+	char peek() {
+		if (empty()) {
+			return '1';
+		}
+		return arr[top];
+	}
+
+	bool empty() {
+		return top == -1;
+	}
+
+	bool full(){
+		return top == MAX - 1;
+	}
+};
+
+class Expression {
+private:
+	bool isoperator(char c) {
+		return (c == '+' || c == '-' || c == '*' || c == '/' || c == '^');
+	}
+
+	int precedence(char op) {
+		if (op == '^') return 3;
+		if (op == '*' || op == '/') return 2;
+		if (op == '+' || op == '-') return 1;
+		return 0;
+	}
+
+public:
+	string infixToPostfix(string infix) {
+		Stack st;
+		string postfix = "";
+		for (char c : infix) {
+			if (isspace(c)) continue;
+
+			if (isalnum(c)) {
+				postfix += c;
+			}
+			else if (c == '(') {
+				st.push(c);
+			}
+			else if (c == ')') {
+				while (!st.empty() && st.peek() != '(') {
+					postfix += st.pop();
+				}
+				st.pop();
+			}
+			else if (isoperator(c)) {
+				while (!st.empty() && precedence(st.peek()) >= precedence(c)) {
+					postfix += st.pop();
+				}
+				st.push(c);
+			}
+		}
+		while (!st.empty()) {
+			postfix += st.pop();
+		}
+		return postfix;
+	}
+
+	string prefixToInfix(string prefix) {
+		string stack[MAX];
+		int top = -1;
+
+		for (int i = prefix.size() - 1; i >= 0; i--) {
+			char c = prefix[i];
+
+			if (isspace(c)) continue;
+
+			if (isalnum(c)) {
+				string op(1, c);
+				stack[++top] = op;
+			}
+			else if (isoperator(c)) {
+				string op1 = stack[top--];
+				string op2 = stack[top--];
+				string expr = "(" + op1 + string(1, c) + op2 + ")";
+				stack[++top] = expr;
+			}
+		}
+		return stack[top];
+	}
+
+	int evaluatePostfix(string postfix) {
+		int stack[MAX];
+		int top = -1;
+
+		for (char c : postfix) {
+			if (isspace(c)) continue;
+
+			if (isdigit(c)) {
+				stack[++top] = c - '0';
+			}
+			else if (isoperator(c)) {
+				int val2 = stack[top--];
+				int val1 = stack[top--];
+				int res;
+
+				switch (c) {
+					case '+':
+						res = val1 + val2;
+						break;
+					case '-':
+						res = val1 - val2;
+						break;
+					case '*':
+						res = val1 * val2;
+						break;
+					case '/':
+						res = val1 / val2;
+						break;
+					case '^':
+						res = pow(val1, val2);
+						break;
+				}
+				stack[++top] = res;
+			}
+		}
+		return stack[top];
+	}
+};
+
+int main() {
+	Expression exp;
+	string input;
+	int choice;
+
+	do {
+		cout << "\n===== MENU =====";
+		cout << "\n1. Infix to Postfix";
+		cout << "\n2. Prefix to Infix";
+		cout << "\n3. Evaluate Postfix";
+		cout << "\n4. Exit";
+		cout << "\nEnter your choice:";
+		cin >> choice;
+		cin.ignore();
+
+		switch (choice) {
+			case 1:
+				cout << "Enter Infix Expression: ";
+				getline(cin, input);
+				cout << "Postfix: " << exp.infixToPostfix(input) << endl;
+				break;
+			case 2:
+				cout << "Enter Prefix Expression: ";
+				getline(cin, input);
+				cout << "Infix: " << exp.prefixToInfix(input) << endl;
+				break;
+			case 3:
+				cout << "Enter Postfix Expression (single-digit only): ";
+				getline(cin, input);
+				cout << "Result: " << exp.evaluatePostfix(input) << endl;
+				break;
+			case 4:
+				cout << "Exiting..." << endl;
+				break;
+			default:
+				cout << "Invalid Choice!" << endl;
+		}
+	} while (choice != 4);
+	return 0;
+}
+
+
+
+
+
+
+--------------------------------------------
+Practical 7
+--------------------------------------------
+#include <bits/stdc++.h>
+using namespace std;
+
+#define UNASSIGNED 0
+#define N 9
+
+bool FindUnassignedLocation(int grid[N][N], int &row, int &col);
+bool isSafe(int grid[N][N], int row, int col, int num);
+
+bool SolveSudoku(int grid[N][N]) {
+    int row, col;
+
+    if (!FindUnassignedLocation(grid, row, col))
+        return true; // success!
+
+    for (int num = 1; num <= 9; num++) {
+        if (isSafe(grid, row, col, num)) {
+            grid[row][col] = num;
+
+            if (SolveSudoku(grid))
+                return true;
+
+            grid[row][col] = UNASSIGNED; // backtrack
+        }
+    }
+    return false; // triggers backtracking
+}
+
+bool FindUnassignedLocation(int grid[N][N], int &row, int &col) {
+    for (row = 0; row < N; row++)
+        for (col = 0; col < N; col++)
+            if (grid[row][col] == UNASSIGNED)
+                return true;
+    return false;
+}
+
+bool UsedInRow(int grid[N][N], int row, int num) {
+    for (int col = 0; col < N; col++)
+        if (grid[row][col] == num)
+            return true;
+    return false;
+}
+
+bool UsedInCol(int grid[N][N], int col, int num) {
+    for (int row = 0; row < N; row++)
+        if (grid[row][col] == num)
+            return true;
+    return false;
+}
+
+bool UsedInBox(int grid[N][N], int boxStartRow, int boxStartCol, int num) {
+    for (int row = 0; row < 3; row++)
+        for (int col = 0; col < 3; col++)
+            if (grid[row + boxStartRow][col + boxStartCol] == num)
+                return true;
+    return false;
+}
+
+bool isSafe(int grid[N][N], int row, int col, int num) {
+    return !UsedInRow(grid, row, num) &&
+           !UsedInCol(grid, col, num) &&
+           !UsedInBox(grid, row - row % 3, col - col % 3, num) &&
+           grid[row][col] == UNASSIGNED;
+}
+
+void printGrid(int grid[N][N]) {
+    for (int row = 0; row < N; row++) {
+        for (int col = 0; col < N; col++)
+            cout << grid[row][col] << " ";
+        cout << endl;
+    }
+}
+
+int main() {
+    int grid[N][N] = {
+        {3, 0, 6, 5, 0, 8, 4, 0, 0},
+        {5, 2, 0, 0, 0, 0, 0, 0, 0},
+        {0, 8, 7, 0, 0, 0, 0, 3, 1},
+        {0, 0, 3, 0, 1, 0, 0, 8, 0},
+        {9, 0, 0, 8, 6, 3, 0, 0, 5},
+        {0, 5, 0, 0, 9, 0, 6, 0, 0},
+        {1, 3, 0, 0, 0, 0, 2, 5, 0},
+        {0, 0, 0, 0, 0, 0, 0, 7, 4},
+        {0, 0, 5, 2, 0, 6, 3, 0, 0}
+    };
+
+    if (SolveSudoku(grid) == true)
+        printGrid(grid);
+    else
+        cout << "No solution exists";
+
+    return 0;
+}
+
+
+------------------------------------
+Practical 8
+------------------------------------
+#include <iostream>
+using namespace std;
+
+#define MAX 50
+
+class cir_que {
+public:
+    int item[MAX];
+    int front, rear;
+
+    cir_que() {
+        front = rear = -1;
+    }
+
+    bool isEmpty() {
+        return (front == -1);
+    }
+
+    bool isFull() {
+        return ((front == 0 && rear == MAX - 1) || (front == rear + 1));
+    }
+
+    void enque(int x) {
+        if (isFull()) {
+            cout << "Queue is full!" << endl;
+            return;
+        }
+        if (front == -1)
+            front = rear = 0;
+        else
+            rear = (rear + 1) % MAX;
+        item[rear] = x;
+    }
+
+    int deque() {
+        if (isEmpty()) {
+            return -1;
+        }
+        int x = item[front];
+        if (front == rear)
+            front = rear = -1;
+        else
+            front = (front + 1) % MAX;
+        return x;
+    }
+};
+
+void RoundRobin(int process[], int n, int arrival[], int burst[], int quantum) {
+    cir_que q;
+    int remaining[n], waiting[n] = {0}, turnaround[n] = {0};
+    int completion[n] = {0};
+    bool inQueue[n] = {false};
+    int currentTime = 0, completed = 0;
+
+    for (int i = 0; i < n; i++)
+        remaining[i] = burst[i];
+
+    cout << "\nGantt Chart (Process Execution Order):\n";
+
+    for (int i = 0; i < n; i++) {
+        if (arrival[i] <= currentTime && !inQueue[i]) {
+            q.enque(i);
+            inQueue[i] = true;
+        }
+    }
+
+    while (completed < n) {
+        if (q.isEmpty()) {
+            currentTime++;
+            for (int i = 0; i < n; i++) {
+                if (arrival[i] <= currentTime && !inQueue[i]) {
+                    q.enque(i);
+                    inQueue[i] = true;
+                }
+            }
+            continue;
+        }
+
+        int i = q.deque();
+        cout << "| P" << process[i] << " ";
+
+        if (remaining[i] > quantum) {
+            remaining[i] -= quantum;
+            currentTime += quantum;
+        } else {
+            currentTime += remaining[i];
+            remaining[i] = 0;
+            completion[i] = currentTime;
+            turnaround[i] = completion[i] - arrival[i];
+            waiting[i] = turnaround[i] - burst[i];
+            completed++;
+        }
+
+        for (int j = 0; j < n; j++) {
+            if (arrival[j] <= currentTime && !inQueue[j] && remaining[j] > 0) {
+                q.enque(j);
+                inQueue[j] = true;
+            }
+        }
+
+        if (remaining[i] > 0)
+            q.enque(i);
+    }
+
+    cout << "|\n\n";
+
+    double totalWT = 0, totalTAT = 0;
+    cout << "Process\tAT\tBT\tCT\tTAT\tWT\n";
+    for (int i = 0; i < n; i++) {
+        totalWT += waiting[i];
+        totalTAT += turnaround[i];
+        cout << "P" << process[i] << "\t" << arrival[i] << "\t" << burst[i] << "\t"
+             << completion[i] << "\t" << turnaround[i] << "\t" << waiting[i] << endl;
+    }
+
+    cout << "\nAverage Waiting Time: " << totalWT / n;
+    cout << "\nAverage Turnaround Time: " << totalTAT / n << endl;
+}
+
+int main() {
+    int n, quantum;
+
+    cout << "Enter number of processes: ";
+    cin >> n;
+
+    int process[n], arrival[n], burst[n];
+
+    for (int i = 0; i < n; i++) {
+        process[i] = i + 1;
+        cout << "\nEnter Arrival Time for P" << process[i] << ": ";
+        cin >> arrival[i];
+        cout << "Enter Burst Time for P" << process[i] << ": ";
+        cin >> burst[i];
+    }
+
+    cout << "\nEnter Time Quantum: ";
+    cin >> quantum;
+
+    RoundRobin(process, n, arrival, burst, quantum);
+
+    return 0;
+}
+
+
+
+-------------------------------
+
+Practical 9
+
+--------------------------------
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+class Node{
+public:
+	int data;
+	Node *next;
+};
+
+class MyDeque{
+	Node *front;
+	Node *rear;
+	
+public:
+	MyDeque(){
+		front = NULL;
+		rear = NULL;
+	}
+	
+	void display(){
+		if(front == NULL && rear == NULL){
+			cout << "Deque is Empty\n";
+		}
+		else{
+			Node *ptr = front;
+			while(ptr != NULL){
+				cout << ptr->data << " -> ";
+				ptr = ptr->next;
+			}
+		}
+	}
+	
+	void insert_front(int n){
+		Node *temp = new Node;
+		temp->data = n;
+		temp->next = NULL;
+		if(front == NULL && rear == NULL){
+			front = rear = temp;
+		}
+		else{
+			temp->next = front;
+			front = temp;
+		}
+	}
+	
+	void insert_rear(int n){
+		Node *temp = new Node;
+		temp->data = n;
+		temp->next = NULL;
+		if(front == NULL && rear == NULL)
+		{
+			front = rear = temp;
+		}
+		else
+		{
+			rear->next = temp;
+			rear = temp;
+		}
+	}
+	
+	void delete_front(){
+		if(front == NULL && rear == NULL)
+		{
+			cout <<"Deque is Empty | Deletion not possible\n";
+		}
+		else if(front == rear)
+		{
+			Node *ptr = front;
+			front = rear = NULL;
+			delete ptr;	
+		}
+		else{
+			Node *ptr = front;
+			front = front->next;
+			delete ptr;
+		}
+	}
+	
+	void delete_rear(){
+		if(front == NULL && rear == NULL){
+			cout << "Deque is Empty | Deletion not possible\n";
+		}
+		else if(front == rear){
+			Node *ptr = rear;
+			front = rear = NULL;
+			delete ptr;
+		}
+		else{
+			Node *temp = front;
+			while(temp->next != NULL){
+				temp = temp->next;
+			}
+			Node *ptr = rear;
+			temp->next = NULL;
+			rear = temp;
+			delete ptr;
+		}
+	}
+};
+int main(){
+	
+	MyDeque Deque;
+	int n;
+	
+	do{
+		cout << "\n===== Menu =====\n";
+		cout << "1. Insert at Front\n";
+		cout << "2. Insert at Rear\n";
+		cout << "3. Delete at Front\n";
+		cout << "4. Delete at Rear\n";
+		cout << "5. Display\n";
+		cout << "6. Exit\n";
+		
+		int choice = 0;
+		cout << "Enter your choice: ";
+		cin >> choice;
+		
+		switch(choice){
+			case 1:
+				cout << "Enter element: ";
+				cin >> n;
+				Deque.insert_front(n);
+				break;
+			case 2:
+				cout << "Enter element: ";
+				cin >> n;
+				Deque.insert_rear(n);
+				break;
+			case 3:
+				Deque.delete_front();
+				break;
+			case 4:
+				Deque.delete_rear();
+				break;
+			case 5:
+				Deque.display();
+				break;
+			case 6:
+				cout << "Exiting....";
+				return 0;
+		}
+	}while(true);
+	
+	return 0;
+}
+
+
+
+
+--------------------------------------
+Practical 10
+----------------------------------------
+#include <bits/stdc++.h>
+using namespace std;
+
+int fibonacci_search(int arr[], int n, int key){
+	int offset = -1;
+	int f2 = 0;
+	int f1 = 1;
+	int f = f1 + f2;
+	
+	while (f < n){
+		f2 = f1;
+		f1 = f;
+		f = f1 + f2;
+	}
+	
+	while ( f > 1){
+		int i = min(offset + f2, n-1);
+		
+		if ( arr[i] < key) {
+			f = f1;
+			f1 = f2;
+			f2 = f - f1;
+			offset = i;
+		}
+		else if ( arr[i] > key) {
+			f = f2;
+			f1 = f1 - f2;
+			f2 = f - f1;
+		}
+		else {
+			return i;
+		}
+	}
+	if ( f1 == 1 && arr[offset + 1] == key){
+			return (offset + 1);
+		}
+	
+	return -1;
+}
+
+int binary_search(int arr[], int n, int key){
+	int low = 0;
+	int high = n - 1;
+	
+	while ( low <= high ) {
+		int mid = low + (high-low) / 2;
+		
+		if ( arr[mid] == key ){
+			return mid;
+		}else if(arr[mid] < key){
+			low = mid + 1;
+		}else if(arr[mid] > key){
+			high = mid - 1;
+		}
+	}
+	return -1;
+}
+
+void bubble_sort(int arr[], int n){
+	bool swapped = false;
+	
+	for ( int i = 0; i < n-1; i++){
+		swapped = false;
+		for(int j=0; j<n-i-1; j++){
+			if(arr[j] > arr[j+1]){
+				swap(arr[j], arr[j+1]);
+				swapped = true;
+			}
+		}
+		if(!swapped) break;
+	}
+}
+
+void insertion_sort(int arr[], int n){
+	int key, j;
+	for(int i =1; i<= n-1; i++){
+		key = arr[i];
+		j = i;
+		while(j > 0 && arr[j] > key){
+			arr[j] = arr[j-1];
+			j--;
+		}
+		arr[j] = key;
+	}
+}
+
+int main() {
+    int arr[7] = {2,5,7,9,11,23,48};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+//    while (true) {
+//        int key;
+//        cout << "Enter key element to search (-1 to exit): ";
+//        cin >> key;
+//        if (key == -1) break;
+//
+//        int result = binary_search(arr, n, key);
+//
+//        if (result == -1)
+//            cout << "Element not found.\n";
+//        else
+//            cout << "Element found at index " << result << ".\n";
+//    }
+
+	insertion_sort(arr,n);
+	for (int i = 0; i < n; i++) {
+    	cout << arr[i] << " ";
+	}
+	
+    return 0;
+}
+
+
+------------------------------
+
+Practical 11
+
+------------------------------
+
+
+
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <list>
+using namespace std;
+
+// (a) Raman's Cold Drink Corner Linear Probing
+class LinearProbing {
+private:
+    int SIZE;
+    int *keys;
+    string *flavors;
+
+public:
+    LinearProbing(int s) {
+        SIZE = s;
+        keys = new int[SIZE];
+        flavors = new string[SIZE];
+        for (int i = 0; i < SIZE; i++) {
+            keys[i] = -1;
+            flavors[i] = "";
+        }
+    }
+
+    int hashFunc(int key) {
+        return key % SIZE;
+    }
+
+    void insertColdDrink(int key, string flavor) {
+        int index = hashFunc(key);
+        int start = index;
+        while (keys[index] != -1) {
+            index = (index + 1) % SIZE;
+            if (index == start) {
+                cout << "Table full! Cannot insert \"" << flavor << "\".\n";
+                return;
+            }
+        }
+        keys[index] = key;
+        flavors[index] = flavor;
+        cout << "Inserted \"" << flavor << "\" at index " << index << endl;
+    }
+
+    void displayTable() {
+        cout << "\n===== Cold Drink Corner Table =====\n";
+        cout << left << setw(10) << "Index" << setw(10) << "Key" << "Flavor\n";
+        for (int i = 0; i < SIZE; i++) {
+            if (keys[i] == -1)
+                cout << left << setw(10) << i << setw(10) << " " << "Empty\n";
+            else
+                cout << left << setw(10) << i << setw(10) << keys[i] << flavors[i] << endl;
+        }
+    }
+
+    void searchColdDrink(string flavor) {
+        for (int i = 0; i < SIZE; i++) {
+            if (flavors[i] == flavor) {
+                cout << "\"" << flavor << "\" found at index " << i << endl;
+                return;
+            }
+        }
+        cout << "\"" << flavor << "\" not found in table.\n";
+    }
+
+    void run() {
+        int n;
+        cout << "\n===== Raman's Cold Drink Corner (Linear Probing) =====\n";
+        cout << "Enter number of cold drink flavours to add (max " << SIZE << "): ";
+        cin >> n;
+        cin.ignore();
+        for (int i = 0; i < n; i++) {
+            int key;
+            string flavor;
+            cout << "\nEnter Cold Drink Key (number): ";
+            cin >> key;
+            cout << "Enter Cold Drink Flavor Name: ";
+            cin.ignore();
+            getline(cin, flavor);
+            insertColdDrink(key, flavor);
+        }
+
+        int choice;
+        do {
+            cout << "\n===== Cold Drink Corner Menu =====\n";
+            cout << "1. Display Table\n";
+            cout << "2. Search Cold Drink\n";
+            cout << "3. Exit to Main Menu\n";
+            cout << "Enter your choice: ";
+            cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    displayTable();
+                    break;
+                case 2: {
+                    string flavor;
+                    cout << "Enter Cold Drink Flavor to search: ";
+                    cin.ignore();
+                    getline(cin, flavor);
+                    searchColdDrink(flavor);
+                    break;
+                }
+                case 3:
+                    cout << "Returning to Main Menu...\n";
+                    break;
+                default:
+                    cout << "Invalid choice! Try again.\n";
+            }
+        } while (choice != 3);
+    }
+};
+
+// (b) Students' Marks Separate Chaining
+class SeparateChaining {
+private:
+    int size;
+    list<int> *table;
+
+public:
+    SeparateChaining(int s) {
+        size = s;
+        table = new list<int>[size];
+    }
+
+    int hashFunc(int key) {
+        return key % size;
+    }
+
+    void insert(int key) {
+        int index = hashFunc(key);
+        table[index].push_back(key);
+    }
+
+    void display() {
+        cout << "\n===== Students' Marks Table (Separate Chaining) =====\n";
+        cout << "Index\tMarks (Linked List)\n";
+        for (int i = 0; i < size; i++) {
+            cout << i << "\t";
+            if (table[i].empty()) {
+                cout << "Empty\n";
+            } else {
+                for (int val : table[i]) {
+                    cout << val << " -> ";
+                }
+                cout << "NULL\n";
+            }
+        }
+    }
+
+    void run() {
+        int n;
+        cout << "\n===== Students' Marks (Separate Chaining) ===\n";
+        cout << "Enter number of students' marks to add: ";
+        cin >> n;
+        for (int i = 0; i < n; i++) {
+            int mark;
+            cout << "Enter marks of student " << i + 1 << ": ";
+            cin >> mark;
+            insert(mark);
+        }
+        display();
+    }
+};
+
+// (c) Lalit's Mango Shop Quadratic Probing
+class QuadraticProbing {
+private:
+    int *table;
+    int size;
+
+public:
+    QuadraticProbing(int s) {
+        size = s;
+        table = new int[size];
+        for (int i = 0; i < size; i++)
+            table[i] = -1;
+    }
+
+    int hashFunc(int key) {
+        return key % size;
+    }
+
+    void insert(int key) {
+        int index = hashFunc(key);
+        for (int i = 0; i < size; i++) {
+            // Error in original PDF code: It implements linear probing with a step of 1, not quadratic.
+            // newIndex calculation should be (index + i*i) % size for true quadratic probing.
+            // Sticking to the code's literal implementation for conversion:
+            int newIndex = (index + i) % size; 
+            
+            if (table[newIndex] == -1) {
+                table[newIndex] = key;
+                cout << "Inserted " << key << " at index " << newIndex << endl;
+                return;
+            }
+        }
+        cout << "Table full! Cannot insert " << key << endl;
+    }
+
+    void display() {
+        cout << "\n===== Lalit's Mango Shop Table (Quadratic Probing) =====\n";
+        cout << "Index\tNo. of Mangoes\n";
+        for (int i = 0; i < size; i++) {
+            cout << i << "\t";
+            if (table[i] == -1)
+                cout << "Empty\n";
+            else
+                cout << table[i] << endl;
+        }
+    }
+
+    void run() {
+        int n;
+        cout << "\n===== Lalit's Mango Fruit Shop (Quadratic Probing) =====\n";
+        cout << "Enter number of mango categories: ";
+        cin >> n;
+        for (int i = 0; i < n; i++) {
+            int key;
+            cout << "Enter number of mangoes for category " << i + 1 << ": ";
+            cin >> key;
+            insert(key);
+        }
+        display();
+    }
+};
+
+// MAIN FUNCTION Menu Driven
+int main() {
+    int mainChoice;
+    do {
+        cout << "\n===== HASH TABLE IMPLEMENTATION MENU (Assignment) =====\n";
+        cout << "1. Raman's Cold Drink Corner (Linear Probing)\n";
+        cout << "2. Students Marks (Separate Chaining)\n";
+        cout << "3. Lalit's Mango Shop (Quadratic Probing)\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> mainChoice;
+
+        switch (mainChoice) {
+            case 1: {
+                int s;
+                cout << "Enter table size for Linear Probing: ";
+                cin >> s;
+                LinearProbing ip(s);
+                ip.run();
+                break;
+            }
+            case 2: {
+                int s;
+                cout << "Enter table size for Separate Chaining: ";
+                cin >> s;
+                SeparateChaining sc(s);
+                sc.run();
+                break;
+            }
+            case 3: {
+                int s;
+                cout << "Enter table size for Quadratic Probing: ";
+                cin >> s;
+                QuadraticProbing qp(s);
+                qp.run();
+                break;
+            }
+            case 4:
+                cout << "Exiting program. Thank you!\n";
+                break;
+            default:
+                cout << "Invalid choice! Try again.\n";
+        }
+    } while (mainChoice != 4);
+    
+    return 0;
+}

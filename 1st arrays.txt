@@ -1,0 +1,168 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Customer {
+public:
+    int id;
+    long long phone;
+    string name;
+    double bill;
+
+    void read() {
+        cout << "Enter Customer ID: ";
+        cin >> id;
+        cout << "Enter Customer Name: ";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // clear leftover newline
+        getline(cin, name);
+        cout << "Enter Phone Number: ";
+        cin >> phone;
+        cout << "Enter Bill Amount ($): ";
+        cin >> bill;
+        cout << "\n";
+    }
+
+    void display() {
+        cout << "\n--- Customer ---\n";
+        cout << "Customer ID  : " << id << endl;
+        cout << "Name         : " << name << endl;
+        cout << "Phone Number : " << phone << endl;
+        cout << "Bill Amount  : $" << bill << endl;
+    }
+
+    void insert() {
+        cout << "\nInserting New Record...\n";
+        read();
+    }
+};
+
+void delete_data(Customer s[], int &n) {
+    int cID;
+    cout << "Enter Customer ID to delete Record: ";
+    cin >> cID;
+
+    int index = -1;
+    for (int i = 0; i < n; i++) {
+        if (s[i].id == cID) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1) {
+        cout << "Customer ID not found!\n";
+        return;
+    }
+
+    for (int i = index; i < n - 1; i++) {
+        s[i] = s[i + 1];
+    }
+    n--;
+    cout << "Record deleted successfully!\n";
+}
+
+void update_data(Customer s[], int n) {
+    int cID, choice;
+    cout << "Enter Customer ID to update Record: ";
+    cin >> cID;
+
+    for (int i = 0; i < n; i++) {
+        if (s[i].id == cID) {
+            cout << "\n1. Update Customer ID\n";
+            cout << "2. Update Customer Name\n";
+            cout << "3. Update Customer Phone\n";
+            cout << "4. Update Final Bill Amount\n";
+            cout << "Enter choice: ";
+            cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    cout << "Enter new Customer ID: ";
+                    cin >> s[i].id;
+                    break;
+                case 2:
+                    cout << "Enter Customer Name: ";
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    getline(cin, s[i].name);
+                    break;
+                case 3:
+                    cout << "Enter new Phone Number: ";
+                    cin >> s[i].phone;
+                    break;
+                case 4:
+                    cout << "Enter Final Amount ($): ";
+                    cin >> s[i].bill;
+                    break;
+                default:
+                    cout << "Invalid choice!\n";
+            }
+            cout << "Record updated successfully!\n";
+            return;
+        }
+    }
+    cout << "Customer ID not found!\n";
+}
+
+int main() {
+    int n = 0; // start with zero records
+
+    Customer s[100];
+
+    int c;
+
+    do {
+        cout << "\n**** MENU ****\n";
+        cout << "1. Fill Details\n";
+        cout << "2. Display\n";
+        cout << "3. Insert\n";
+        cout << "4. Delete Data\n";
+        cout << "5. Update Data\n";
+        cout << "6. Exit\n";
+        cout << "Enter choice: ";
+        cin >> c;
+
+        switch (c) {
+            case 1:
+                cout << "Enter Total Enrollments: ";
+                cin >> n;
+                cout << "ENTER DETAILS FOR RECORDS\n";
+                for (int i = 0; i < n; i++) {
+                    s[i].read();
+                }
+                break;
+
+            case 2:
+                cout << "\nTOTAL RECORDS\n";
+                for (int i = 0; i < n; i++) {
+                    s[i].display();
+                }
+                break;
+
+            case 3:
+                if (n < 100) {
+                    s[n].insert();
+                    n++;
+                } else {
+                    cout << "Record limit reached!\n";
+                }
+                break;
+
+            case 4:
+                delete_data(s, n);
+                break;
+
+            case 5:
+                update_data(s, n);
+                break;
+
+            case 6:
+                cout << "Exiting...\n";
+                break;
+
+            default:
+                cout << "Invalid choice!\n";
+        }
+    } while (c != 6);
+
+    return 0;
+}
